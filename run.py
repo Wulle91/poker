@@ -36,6 +36,7 @@ def check(data, symbol):
     something better, if he has no pairs he will leave 
     one color where he has most cards to try to get flush
     """
+    #here cod is looking if there is a card without pair and removes it itf does
     remove_hand = []
     for i in data:
         if data.count(i) < 2:
@@ -43,7 +44,7 @@ def check(data, symbol):
             remove_hand.append(comp_card[ind])
     for card in remove_hand:
         comp_card.remove(card)
-        
+    #if there are no pairs, code leaves the same colors    
     if len(comp_card) == 0:
         suit_hand = []
         set_suit = set(symbol)
@@ -57,21 +58,39 @@ def check(data, symbol):
         for x, element in enumerate(symbol):
             if element == most_common:
                 suit_hand.append(DECK[x])
-                
+    # if there are less than three colors, coputer leaves high cards            
         if len(suit_hand) < 3:
-            print(len(suit_hand))
-            if 'A' in data:
-                ind = data.index('A')
-                
-                comp_card.append(DECK[ind])
-                
-            if 'K' in data:
-                ind2 = data.index('K') 
-                comp_card.append(DECK[ind2])  
-            
+            high_list = ['A','K','Q','J','1','9']
+            for x in data:
+                if x in high_list:
+                    ind = data.index(x)
+                    comp_card.append(DECK[ind])  
         else:
-            comp_card.append(suit_hand)
-    print(comp_card)
+            for x in suit_hand:
+                comp_card.append(x)
+    # if PC has just one hight card or just tri color he will iterate to search flusch
+        if len(comp_card) == 1 or len(suit_hand) < 3:
+            scale_list = ['A','K','Q','J','1','9','8','7','6','5','4','3','2','A']
+            scale_hand = DECK[0:5]
+            rest = []
+            for x in range(len(scale_list)-2):
+                five_cards = scale_list[x:x+5]
+                x += 0
+                res = [x for x in five_cards + data if x not in five_cards]
+
+                if len(res) < 2:
+                    rest.append(res[0])
+            if five_cards == scale_hand:
+                comp_card.clear()
+                for x in scale_hand:
+                    comp_card.append(x)
+            if 5-len(rest) <= 4:
+                ind = data.index(rest[0])
+                scale_hand.remove(DECK[ind])
+                comp_card.clear()
+                for x in scale_hand:
+                    comp_card.append(x)
+    print(comp_card,'this')
  
 new_list = check(card_number, card_symbol)   
 
@@ -86,3 +105,4 @@ def winning_evaluation(hand, symbol):
    
     if card_number = ['A','K','O','J','1'] and symbol.count
     """
+    

@@ -5,13 +5,13 @@ import random
 
 
 
-DECK = ['A♥', 'K♥', 'Q♥', 'J♥', '10♥', '9♥', '8♥', '7♥', '6♥', '5♥', '4♥',
-        '3♥', '2♥', 'A♠', 'K♠', 'Q♠', 'J♠', '10♠', '9♠', '8♠', '7♠', '6♠',
-        '5♠', '4♠', '3♠', '2♠', 'A♦', 'K♦', 'Q♦', 'J♦', '10♦', '9♦', '8♦',
-        '7♦', '6♦', '5♦', '4♦', '3♦', '2♦', 'A♣', 'K♣', 'Q♣', 'J♣', '10♣',
-        '9♣', '8♣', '7♣', '6♣', '5♣', '4♣', '3♣', '2♣']
+DECK = ['6♣', '5♣', '4♣', '3♣', '2♣','6♣', '5♣', '4♣', '3♣', '2♣','6♣', '5♣', '4♣', '3♣', '2♣','6♣', '5♣', '4♣', '3♣', '2♣']
 
-random.shuffle(DECK)
+
+scale_list = ['A', 'K', 'Q', 'J', '1', '9', '8', '7',
+              '6', '5', '4', '3', '2', 'A']
+
+#random.shuffle(DECK)
 
 
 def computer_cards():
@@ -156,92 +156,160 @@ def winning_evaluation(player):
     """
     Go trought all combination to evaluate winner in playing hand
     """
-    scale_list = ['A', 'K', 'Q', 'J', '1', '9', '8', '7',
-                  '6', '5', '4', '3', '2', 'A']
+    
     c_num = [i[0]for i in player]   
     c_sym = [i[-1]for i in player]
     points = 0
-    if c_num == ['A', 'K', 'O', 'J', '1']:
-        for x in c_sym:
-            if x == x:
-                points = 20
-    for x in range(len(scale_list)-2):
-        five_cards = scale_list[x:x+5]
-        x += 0
-        if c_num == five_cards:
-            points = 190
-    for x in range(len(c_num)-1):
-        poker = c_num[x:x+4]
-        x += 0
-        if list(dict.fromkeys(c_num)) == poker:
-            points = 180
+    
+    def s_scales(syms):
+        """
+        Looks for colors in delt cards
+        """
+        qty = 0
+        for x in syms:
+            qty = syms.count(x)
+            if qty == 5:          
+                return True
+            else:
+                return False
+        
+    scale_syms = s_scales(c_sym)
+    
+    # pairs
     if len([x for n, x in enumerate(c_num) if x in c_num[:n]]) == 1:
         duplicates = [x for n, x in enumerate(c_num) if x in c_num[:n]]
         for x in duplicates:
-            points = x
-            if x == '1':
-                points = 10
-            if x == 'J':
-                points = 11
-            if x == 'Q':
-                points = 12
-            if x == 'K':
-                points = 13
             if x == 'A':
-                points = 14
+                points = 27
+            elif x == 'K':
+                points = 26
+            elif x == 'Q':
+                points = 25
+            elif x == 'J':
+                points = 24
+            elif x == '1':
+                points = 23
+            else:
+                points = int(x)+13
+    # two pairs and tree of a kind
     if len([x for n, x in enumerate(c_num) if x in c_num[:n]]) == 2:
         dubles = [x for n, x in enumerate(c_num) if x in c_num[:n]]
-        letters = sorted([i for i in dubles if not str(i).isdigit()])
         numbers = sorted([i for i in dubles if str(i).isdigit()], reverse=True)
-        sort_dubles = letters + numbers
+        # two pairs
         if dubles[0] != dubles[1]:
-
-            if sort_dubles[0] == '1':
-                points = 23
-            elif sort_dubles[0] == 'J':
-                points = 24
-            elif sort_dubles[0] == 'Q':
-                points = 25
-            elif sort_dubles[0] == 'K':
-                points = 26
-            elif sort_dubles[0] == 'A':
-                points = 27 
-            else:
-                points = int(sort_dubles[0]) + 13
-        if dubles[0] == dubles[1]:
-        
-            if sort_dubles[0] == '1':
-                points = 36   
-            elif sort_dubles[0] == 'J':
-                points = 37
-            elif sort_dubles[0] == 'Q':
-                points = 38
-            elif sort_dubles[0] == 'K':
+            if 'A' in dubles:
+                points = 40 
+            elif 'K' in dubles:
                 points = 39
-            elif sort_dubles[0] == 'A':
-                points = 40
+            elif 'Q' in dubles:
+                points = 38
+            elif 'J' in dubles:
+                points = 37
+            elif '1' in dubles:
+                points = 36 
             else:
-                points = int(sort_dubles[0]) + 26
+                points = int(numbers[0]) + 26
+        # tree of a kind
+        if dubles[0] == dubles[1]: 
+            if 'A' in dubles:
+                points = 53   
+            elif 'K' in dubles:
+                points = 52
+            elif 'Q' in dubles:
+                points = 51
+            elif 'J' in dubles:
+                points = 50
+            elif '1' in dubles:
+                points = 49
+            else:
+                points = int(numbers[0]) + 39
+    # full house
+    if len([x for n, x in enumerate(c_num) if x in c_num[:n]]) == 3:
+        dubles = [x for n, x in enumerate(c_num) if x in c_num[:n]]
+        numbers = sorted([i for i in dubles if str(i).isdigit()], reverse=True)
+        print(len(dubles))
+        if not any(x == y for x in dubles for y in dubles if x != y):
+            if dubles.count('A') == 2:
+                points = 88 
+            elif dubles.count('K') == 2:
+                points = 87
+            elif dubles.count('Q') == 2:
+                points = 86
+            elif dubles.count('J') == 2:
+                points = 85
+            elif dubles.count('1') == 2:
+                points = 84
+            elif len(set(dubles)) == 2:
+                points = int(numbers[0]) + 76
+    # poker
+    for x in c_num:
+        qty = c_num.count(x)
+        if qty == 4:
+            if 'A' in dubles:
+                points = 101
+            elif 'K' in dubles:
+                points = 100
+            elif 'Q' in dubles:
+                points = 99
+            elif 'J' in dubles:
+                points = 98
+            elif '1' in dubles:
+                points = 97
+            else:
+                points = int(numbers[0]) + 87
+    # scales
     for x in range(len(scale_list)-4):
         five_cards = scale_list[x:x+5]
         x += 0
-        hand_without_dubles = list(dict.fromkeys(c_num))
-        if len([x for x in five_cards + hand_without_dubles if x in five_cards]) == 10:
-            print(five_cards[0])
+        numbers = sorted([i for i in c_num if str(i).isdigit()], reverse=True)
+        no_dubles = list(dict.fromkeys(c_num))
+        if len([x for x in five_cards + no_dubles if x in five_cards])==10:
             if five_cards[0] == '1':
-                points = 47
+                points = 60
             elif five_cards[0] == 'J':
-                points = 48
+                points = 61
             elif five_cards[0] == 'Q':
-                points = 49
+                points = 62
             elif five_cards[0] == 'K':
-                points = 50
+                points = 63
             elif five_cards[0] == 'A':
-                points = 51 
+                points = 64 
             else:
-                points = int(five_cards[0]) + 39
+                points = int(five_cards[0]) + 52
+        # street flush, scale with same color
+            print(scale_syms)
+            if scale_syms == True:
+                if 'A' in c_num:
+                    points = 110
+                elif 'K' in c_num:
+                    points = 109
+                elif 'Q' in c_num:
+                    points = 108
+                elif 'J' in c_num:
+                    points = 107
+                elif '1' in c_num:
+                    points = 106
+                else:
+                    points = int(c_num[0]) + 96
+    # flush/color
+    for x in c_sym:
+        qty = c_sym.count(x)
+        if qty == 5:
+            numbers = sorted([i for i in c_num if str(i).isdigit()], reverse=True)
+            if 'A' in c_num:
+                points = 77   
+            elif 'K' in c_num:
+                points = 76
+            elif 'Q' in c_num:
+                points = 75
+            elif 'J' in c_num:
+                points = 74
+            elif '1' in c_num:
+                points = 73
+            else:
+                points = int(numbers[0]) + 63   
+    
     return points
-
 
 
 

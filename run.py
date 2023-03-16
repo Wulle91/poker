@@ -4,27 +4,32 @@
 import random
 
 
-DECK = ['A♥','K♥','Q♥','J♥','10♥','9♥','8♥','7♥','6♥','5♥','4♥','3♥','2♥',
-        'A♠','K♠','Q♠','J♠','10♠','9♠','8♠','7♠','6♠','5♠','4♠','3♠','2♠',
-        'A♦','K♦','Q♦','J♦','10♦','9♦','8♦','7♦','6♦','5♦','4♦','3♦','2♦',
-        'A♣','K♣','Q♣','J♣','10♣','9♣','8♣','7♣','6♣','5♣','4♣','3♣','2♣']
+
+DECK = ['A♥', 'K♥', 'Q♥', 'J♥', '10♥', '9♥', '8♥', '7♥', '6♥', '5♥', '4♥',
+        '3♥', '2♥', 'A♠', 'K♠', 'Q♠', 'J♠', '10♠', '9♠', '8♠', '7♠', '6♠',
+        '5♠', '4♠', '3♠', '2♠', 'A♦', 'K♦', 'Q♦', 'J♦', '10♦', '9♦', '8♦',
+        '7♦', '6♦', '5♦', '4♦', '3♦', '2♦', 'A♣', 'K♣', 'Q♣', 'J♣', '10♣',
+        '9♣', '8♣', '7♣', '6♣', '5♣', '4♣', '3♣', '2♣']
 
 random.shuffle(DECK)
+
 
 def computer_cards():
     computer_cards = DECK[0:5]
     return computer_cards
-   
+
+
 def person_cards():
     person_cards = DECK[5:10]
     print("Your cards:")
     print(person_cards)
     return person_cards
-    
+
+
 comp_card = computer_cards()
 
 pers_card = person_cards()
- 
+
 card_number = [i[0]for i in comp_card]   
 card_symbol = [i[-1]for i in comp_card]
 
@@ -38,7 +43,7 @@ def check(data, symbol):
     if there are only three colors he will search for 5 straght cards or 
     if there are less tha 4 for straight he will leave all cards over 8, 
     """
-    #here cod is looking if there is a card without pair and removes it itf does
+    # here cod is looking if there is a card without pair and removes it
     remove_hand = []
     for i in data:
         if data.count(i) < 2:
@@ -46,7 +51,7 @@ def check(data, symbol):
             remove_hand.append(comp_card[ind])
     for card in remove_hand:
         comp_card.remove(card)
-    #if there are no pairs, code leaves the same colors    
+    # if there are no pairs, code leaves the same colors    
     if len(comp_card) == 0:
         suit_hand = []
         set_suit = set(symbol)
@@ -62,17 +67,18 @@ def check(data, symbol):
                 suit_hand.append(DECK[x])
     # if there are less than three colors, coputer leaves high cards            
         if len(suit_hand) < 3:
-            high_list = ['A','K','Q','J','1','9']
+            high_list = ['A', 'K', 'Q', 'J', '1', '9']
             for x in data:
                 if x in high_list:
                     ind = data.index(x)
-                    comp_card.append(DECK[ind])  
+                    comp_card.append(DECK[ind])
         else:
             for x in suit_hand:
                 comp_card.append(x)
-    # if PC has just one high card or just tree colors he will iterate to search flush
+    # if PC has just one high card or just tree colors he will search flush
         if len(comp_card) == 1 or len(suit_hand) < 3:
-            scale_list = ['A','K','Q','J','1','9','8','7','6','5','4','3','2','A']
+            scale_list = ['A', 'K', 'Q', 'J', '1', '9', '8', '7', '6', '5',
+                          '4', '3', '2', 'A']
             scale_hand = DECK[0:5]
             rest = []
             for x in range(len(scale_list)-2):
@@ -92,22 +98,25 @@ def check(data, symbol):
                 comp_card.clear()
                 for x in scale_hand:
                     comp_card.append(x)
-    return comp_card
- 
-new_list = check(card_number, card_symbol)   
 
-def user_input(): 
-    
+    return comp_card
+
+
+new_list = check(card_number, card_symbol)
+
+
+def user_input():
+
     while True:
         print('Enter card numbers you wish to change')
         print("Data should be numbers from 1-5, separated by commas.")
         print("Example: 1, 3, 5\n")
 
         player_input = input("Enter your data here:\n")
-        
+
         player_card_index = player_input.split(',')
         player_card_index.sort(reverse=True)
-        
+
         if validate_user_input(player_card_index):
             for i in player_card_index:               
                 del pers_card[int(i)-1]
@@ -123,9 +132,7 @@ def user_input():
             break
     print(f'Computer cards are: {comp_card}')
     print(f'Your cards are:     {pers_card}')
-
- 
-
+    
 
 def validate_user_input(values):
     """
@@ -141,41 +148,106 @@ def validate_user_input(values):
         return False
     return True
 
-user_input()  
 
+user_input()
 
 
 def winning_evaluation(player):
     """
     Go trought all combination to evaluate winner in playing hand
     """
-    scale_list = ['A','K','Q','J','1','9','8','7','6','5','4','3','2','A']
+    scale_list = ['A', 'K', 'Q', 'J', '1', '9', '8', '7',
+                  '6', '5', '4', '3', '2', 'A']
     c_num = [i[0]for i in player]   
     c_sym = [i[-1]for i in player]
-    points = []
-    if c_num == ['A','K','O','J','1']:
+    points = 0
+    if c_num == ['A', 'K', 'O', 'J', '1']:
         for x in c_sym:
             if x == x:
                 points = 20
     for x in range(len(scale_list)-2):
         five_cards = scale_list[x:x+5]
-        x += 0 
+        x += 0
         if c_num == five_cards:
-            points = 19
+            points = 190
     for x in range(len(c_num)-1):
         poker = c_num[x:x+4]
         x += 0
-        if list(dict.fromkeys(c_num)) == x:
-            points = 18  
-    if len(list(dict.fromkeys(c_num))) == 4:
-            points = 2     
-    else:
-        points = 0            
-    return points       
-print(comp_card)
-print(pers_card)
+        if list(dict.fromkeys(c_num)) == poker:
+            points = 180
+    if len([x for n, x in enumerate(c_num) if x in c_num[:n]]) == 1:
+        duplicates = [x for n, x in enumerate(c_num) if x in c_num[:n]]
+        for x in duplicates:
+            points = x
+            if x == '1':
+                points = 10
+            if x == 'J':
+                points = 11
+            if x == 'Q':
+                points = 12
+            if x == 'K':
+                points = 13
+            if x == 'A':
+                points = 14
+    if len([x for n, x in enumerate(c_num) if x in c_num[:n]]) == 2:
+        dubles = [x for n, x in enumerate(c_num) if x in c_num[:n]]
+        letters = sorted([i for i in dubles if not str(i).isdigit()])
+        numbers = sorted([i for i in dubles if str(i).isdigit()], reverse=True)
+        sort_dubles = letters + numbers
+        if dubles[0] != dubles[1]:
+
+            if sort_dubles[0] == '1':
+                points = 23
+            elif sort_dubles[0] == 'J':
+                points = 24
+            elif sort_dubles[0] == 'Q':
+                points = 25
+            elif sort_dubles[0] == 'K':
+                points = 26
+            elif sort_dubles[0] == 'A':
+                points = 27 
+            else:
+                points = int(sort_dubles[0]) + 13
+        if dubles[0] == dubles[1]:
+        
+            if sort_dubles[0] == '1':
+                points = 36   
+            elif sort_dubles[0] == 'J':
+                points = 37
+            elif sort_dubles[0] == 'Q':
+                points = 38
+            elif sort_dubles[0] == 'K':
+                points = 39
+            elif sort_dubles[0] == 'A':
+                points = 40
+            else:
+                points = int(sort_dubles[0]) + 26
+    for x in range(len(scale_list)-4):
+        five_cards = scale_list[x:x+5]
+        x += 0
+        hand_without_dubles = list(dict.fromkeys(c_num))
+        if len([x for x in five_cards + hand_without_dubles if x in five_cards]) == 10:
+            print(five_cards[0])
+            if five_cards[0] == '1':
+                points = 47
+            elif five_cards[0] == 'J':
+                points = 48
+            elif five_cards[0] == 'Q':
+                points = 49
+            elif five_cards[0] == 'K':
+                points = 50
+            elif five_cards[0] == 'A':
+                points = 51 
+            else:
+                points = int(five_cards[0]) + 39
+    return points
+
+
+
+
 points_c = winning_evaluation(comp_card)   
 points_p = winning_evaluation(pers_card) 
 print(f'Computer got {points_c} points')   
 print(f'You got {points_p} points')  
-    
+
+

@@ -13,11 +13,11 @@ random.shuffle(DECK)
 
 def computer_cards():
     computer_cards = DECK[0:5]
-    print(computer_cards)
     return computer_cards
    
 def person_cards():
     person_cards = DECK[5:10]
+    print("Your cards:")
     print(person_cards)
     return person_cards
     
@@ -31,10 +31,12 @@ card_symbol = [i[-1]for i in comp_card]
 
 def check(data, symbol):
     """
-    computer discards cards, if he has same cards 
-    he will leave them and change others to try to get 
-    something better, if he has no pairs he will leave 
-    one color where he has most cards to try to get flush
+    computer has to discard cards, if he has some pairs, 
+    three of a kind or poker he will leave them and change 
+    others to try to get something better, if he has no pairs he 
+    will leave one color where he has most cards to try to get flush,
+    if there are only three colors he will search for 5 straght cards or 
+    if there are less tha 4 for straight he will leave all cards over 8, 
     """
     #here cod is looking if there is a card without pair and removes it itf does
     remove_hand = []
@@ -68,7 +70,7 @@ def check(data, symbol):
         else:
             for x in suit_hand:
                 comp_card.append(x)
-    # if PC has just one hight card or just tri color he will iterate to search flusch
+    # if PC has just one high card or just tree colors he will iterate to search flush
         if len(comp_card) == 1 or len(suit_hand) < 3:
             scale_list = ['A','K','Q','J','1','9','8','7','6','5','4','3','2','A']
             scale_hand = DECK[0:5]
@@ -84,25 +86,96 @@ def check(data, symbol):
                 comp_card.clear()
                 for x in scale_hand:
                     comp_card.append(x)
-            if 5-len(rest) <= 4:
+            if 5-len(rest) <= 3:
                 ind = data.index(rest[0])
                 scale_hand.remove(DECK[ind])
                 comp_card.clear()
                 for x in scale_hand:
                     comp_card.append(x)
-    print(comp_card,'this')
+    return comp_card
  
 new_list = check(card_number, card_symbol)   
 
-#my_suit_list = [i[:-1]for i in comp_card]
-#print(my_suit_list)
-
-
-"""
-def winning_evaluation(hand, symbol):
+def user_input(): 
     
-    Go trought all combination to evaluate winner in playing hand
-   
-    if card_number = ['A','K','O','J','1'] and symbol.count
+    while True:
+        print('Enter card numbers you wish to change')
+        print("Data should be numbers from 1-5, separated by commas.")
+        print("Example: 1, 3, 5\n")
+
+        player_input = input("Enter your data here:\n")
+        
+        player_card_index = player_input.split(',')
+        player_card_index.sort(reverse=True)
+        
+        if validate_user_input(player_card_index):
+            for i in player_card_index:               
+                del pers_card[int(i)-1]
+            comp_add = 5 - len(comp_card)
+            new_card_comp = DECK[10:10+int(comp_add)]
+            for i in new_card_comp:
+                comp_card.append(i)
+            pers_add_cards = 5 - len(pers_card)
+            pers_add = comp_add + pers_add_cards
+            new_card_pers = DECK[10+int(comp_add):10+int(pers_add)]
+            for i in new_card_pers:
+                pers_card.append(i)
+            break
+    print(f'Computer cards are: {comp_card}')
+    print(f'Your cards are:     {pers_card}')
+
+ 
+
+
+def validate_user_input(values):
     """
+    convert strings in integers and valuate if it meet criteria
+    we've set for input, raises error if not correct
+    """
+    try:
+        [int(value) for value in values]
+        if len(values) > 6:
+            raise ValueError(f"You have only 5 cards, you provided {len(values)}")
+    except ValueError as e:
+        print(f'Invalid data {e} please try again.\n')
+        return False
+    return True
+
+user_input()  
+
+
+
+def winning_evaluation(player):
+    """
+    Go trought all combination to evaluate winner in playing hand
+    """
+    scale_list = ['A','K','Q','J','1','9','8','7','6','5','4','3','2','A']
+    c_num = [i[0]for i in player]   
+    c_sym = [i[-1]for i in player]
+    points = []
+    if c_num == ['A','K','O','J','1']:
+        for x in c_sym:
+            if x == x:
+                points = 20
+    for x in range(len(scale_list)-2):
+        five_cards = scale_list[x:x+5]
+        x += 0 
+        if c_num == five_cards:
+            points = 19
+    for x in range(len(c_num)-1):
+        poker = c_num[x:x+4]
+        x += 0
+        if list(dict.fromkeys(c_num)) == x:
+            points = 18  
+    if len(list(dict.fromkeys(c_num))) == 4:
+            points = 2     
+    else:
+        points = 0            
+    return points       
+print(comp_card)
+print(pers_card)
+points_c = winning_evaluation(comp_card)   
+points_p = winning_evaluation(pers_card) 
+print(f'Computer got {points_c} points')   
+print(f'You got {points_p} points')  
     

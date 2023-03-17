@@ -5,13 +5,16 @@ import random
 
 
 
-DECK = ['6♣', '5♣', '4♣', '3♣', '2♣','6♣', '5♣', '4♣', '3♣', '2♣','6♣', '5♣', '4♣', '3♣', '2♣','6♣', '5♣', '4♣', '3♣', '2♣']
-
+DECK = ['A♥', 'K♥', 'Q♥', 'J♥', '10♥', '9♥', '8♥', '7♥', '6♥', '5♥', '4♥',
+        '3♥', '2♥', 'A♠', 'K♠', 'Q♠', 'J♠', '10♠', '9♠', '8♠', '7♠', '6♠',
+        '5♠', '4♠', '3♠', '2♠', 'A♦', 'K♦', 'Q♦', 'J♦', '10♦', '9♦', '8♦',
+        '7♦', '6♦', '5♦', '4♦', '3♦', '2♦', 'A♣', 'K♣', 'Q♣', 'J♣', '10♣',
+        '9♣', '8♣', '7♣', '6♣', '5♣', '4♣', '3♣', '2♣']
 
 scale_list = ['A', 'K', 'Q', 'J', '1', '9', '8', '7',
               '6', '5', '4', '3', '2', 'A']
 
-#random.shuffle(DECK)
+random.shuffle(DECK)
 
 
 def computer_cards():
@@ -175,6 +178,22 @@ def winning_evaluation(player):
         
     scale_syms = s_scales(c_sym)
     
+    # high cards
+    if len(list(set(c_num))) == 5:
+        for x in c_num:
+            if 'A' in c_num:
+                points = 14
+            elif 'K' in c_num:
+                points = 13
+            elif 'Q' in c_num:
+                points = 12
+            elif 'J' in c_num:
+                points = 11
+            elif '1' in c_num:
+                points = 10
+            else:
+                points = int(x)
+    
     # pairs
     if len([x for n, x in enumerate(c_num) if x in c_num[:n]]) == 1:
         duplicates = [x for n, x in enumerate(c_num) if x in c_num[:n]]
@@ -257,6 +276,21 @@ def winning_evaluation(player):
                 points = 97
             else:
                 points = int(numbers[0]) + 87
+    # flush/color
+    if scale_syms is True:
+        numbers = sorted([i for i in c_num if str(i).isdigit()], reverse=True)
+        if 'A' in c_num:
+            points = 77   
+        elif 'K' in c_num:
+            points = 76
+        elif 'Q' in c_num:
+            points = 75
+        elif 'J' in c_num:
+            points = 74
+        elif '1' in c_num:
+            points = 73
+        else:
+            points = int(numbers[0]) + 63
     # scales
     for x in range(len(scale_list)-4):
         five_cards = scale_list[x:x+5]
@@ -276,9 +310,8 @@ def winning_evaluation(player):
                 points = 64 
             else:
                 points = int(five_cards[0]) + 52
-        # street flush, scale with same color
-            print(scale_syms)
-            if scale_syms == True:
+        # street flush and Royal Flush, scales with same color
+            if scale_syms is True:
                 if 'A' in c_num:
                     points = 110
                 elif 'K' in c_num:
@@ -291,31 +324,10 @@ def winning_evaluation(player):
                     points = 106
                 else:
                     points = int(c_num[0]) + 96
-    # flush/color
-    for x in c_sym:
-        qty = c_sym.count(x)
-        if qty == 5:
-            numbers = sorted([i for i in c_num if str(i).isdigit()], reverse=True)
-            if 'A' in c_num:
-                points = 77   
-            elif 'K' in c_num:
-                points = 76
-            elif 'Q' in c_num:
-                points = 75
-            elif 'J' in c_num:
-                points = 74
-            elif '1' in c_num:
-                points = 73
-            else:
-                points = int(numbers[0]) + 63   
-    
     return points
 
 
-
-points_c = winning_evaluation(comp_card)   
-points_p = winning_evaluation(pers_card) 
-print(f'Computer got {points_c} points')   
-print(f'You got {points_p} points')  
-
-
+points_c = winning_evaluation(comp_card)
+points_p = winning_evaluation(pers_card)
+print(f'Computer got {points_c} points')
+print(f'You got {points_p} points')
